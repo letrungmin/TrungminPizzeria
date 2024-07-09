@@ -6,30 +6,37 @@ using System.Threading.Tasks;
 
 namespace TrungminPizzeria
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Menu
     {
-        private List<MenuItem> menuItems = new List<MenuItem>();
+        private readonly List<MenuItem> menuItems;
+        private readonly PizzaRepository pizzaRepository;
 
-        public Menu(List<Pizza> pizzas, List<Topping> toppings)
+        public Menu(PizzaRepository pizzaRepository)
         {
-            // Create menu items based on pizza and topping combinations
+            this.pizzaRepository = pizzaRepository;
+            menuItems = GenerateMenuItems();
+        }
+
+        private List<MenuItem> GenerateMenuItems()
+        {
+            var menuItems = new List<MenuItem>();
+            var pizzas = pizzaRepository.GetAllPizzas();
+            var toppings = pizzaRepository.GetAllToppings();
+
             foreach (var pizza in pizzas)
             {
                 foreach (var size in new[] { "Small", "Medium", "Large" })
                 {
                     var menuItem = new MenuItem(pizza, size);
-
-                    // Add default toppings based on pizza type (you'll need to define these rules)
-                    if (pizza.Type == "Margherita")
-                    {
-                        menuItem.AddDefaultTopping(toppings.Find(t => t.Name == "Mozzarella"));
-                        menuItem.AddDefaultTopping(toppings.Find(t => t.Name == "Tomato Sauce"));
-                    }
-                    // ... (Add default toppings for other pizza types)
-
+                    menuItem.AddDefaultToppings(toppings, pizza.Type); // Pass pizza type for default toppings
                     menuItems.Add(menuItem);
                 }
             }
+            return menuItems;
         }
 
         public List<MenuItem> GetMenuItemsByType(string type)
@@ -46,7 +53,24 @@ namespace TrungminPizzeria
         {
             return menuItems;
         }
-    }
 
+        public MenuItem GetMenuItem(int itemNumber)
+        {
+            if (itemNumber >= 1 && itemNumber <= menuItems.Count)
+            {
+                return menuItems[itemNumber - 1];
+            }
+            else
+            {
+                throw new ArgumentException("Invalid menu item number.");
+            }
+        }
+
+        public List<MenuItem> SearchByToppings(string toppingsCriteria)
+        {
+            string[] searchToppings = toppingsCriteria.Split(',').Select(t => t.Trim().ToLower()).ToArray();
+            return menuItems.Where(mi => searchToppings.All(t => mi.DefaultToppings.Any(dt => dt.Name.ToLower() == t))).ToList();
+        }
+    }
 
 }

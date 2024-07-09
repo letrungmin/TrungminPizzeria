@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace TrungminPizzeria
 {
@@ -14,11 +15,13 @@ namespace TrungminPizzeria
 
         public PizzaRepository()
         {
+            // Load initial data from JSON files
             LoadPizzasFromFile("pizzas.json");
             LoadToppingsFromFile("toppings.json");
         }
 
         public List<Pizza> GetAllPizzas() => pizzas;
+
         public List<Topping> GetAllToppings() => toppings;
 
         public Pizza GetPizza(string type, string size)
@@ -29,9 +32,33 @@ namespace TrungminPizzeria
             );
         }
 
+        public void LoadPizzasFromFile(string filePath)
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                pizzas = JsonConvert.DeserializeObject<List<Pizza>>(json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading pizzas: {ex.Message}");
+                // Handle the error appropriately (e.g., provide default pizzas)
+            }
+        }
 
-        // Methods for loading and saving pizzas and toppings from JSON files
-        // ... (Use JsonConvert.DeserializeObject and JsonConvert.SerializeObject)
+        public void LoadToppingsFromFile(string filePath)
+        {
+            try
+            {
+                string json = File.ReadAllText(filePath);
+                toppings = JsonConvert.DeserializeObject<List<Topping>>(json);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading toppings: {ex.Message}");
+                // Handle the error appropriately (e.g., provide default toppings)
+            }
+        }
     }
 
 }

@@ -19,9 +19,24 @@ namespace TrungminPizzeria
             Size = size;
         }
 
-        public void AddDefaultTopping(Topping topping)
+        public void AddDefaultToppings(List<Topping> allToppings, string pizzaType)
         {
-            DefaultToppings.Add(topping);
+            // Logic to add default toppings based on pizzaType
+            switch (pizzaType.ToLower())
+            {
+                case "margherita":
+                    DefaultToppings.AddRange(allToppings.Where(t => t.Name.ToLower() == "mozzarella" || t.Name.ToLower() == "tomato sauce"));
+                    break;
+                case "pepperoni":
+                    DefaultToppings.AddRange(allToppings.Where(t => t.Name.ToLower() == "mozzarella" || t.Name.ToLower() == "tomato sauce" || t.Name.ToLower() == "pepperoni"));
+                    break;
+                case "veggie":
+                    DefaultToppings.AddRange(allToppings.Where(t => t.Name.ToLower() == "mozzarella" || t.Name.ToLower() == "tomato sauce" || t.Name.ToLower() == "mushrooms" || t.Name.ToLower() == "onions" || t.Name.ToLower() == "bell peppers"));
+                    break;
+                // ... (Add default toppings for other pizza types)
+                default:
+                    throw new ArgumentException("Invalid pizza type.");
+            }
         }
 
         public decimal GetPrice()

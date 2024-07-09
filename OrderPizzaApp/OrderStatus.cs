@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrungminPizzeria
+namespace OrderPizzaApp
 {
-    internal class Program
+    internal class OrderStatus
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

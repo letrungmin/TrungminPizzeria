@@ -1,21 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks; // For Task.Delay() if you want to add a delay between menu options
+using Newtonsoft.Json;
 
 namespace TrungminPizzeria
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            // Create a new PizzaRepository and load data
             PizzaRepository repository = new PizzaRepository();
-            repository.LoadPizzasFromFile("pizzas.json"); // Or your preferred data source
-            repository.LoadToppingsFromFile("toppings.json");
-
-            // Create a new Menu (passing only the repository)
-            Menu menu = new Menu(repository); // Correct constructor call
-
-            // Create a new ConsoleUI and start the application
-            ConsoleUI ui = new ConsoleUI(menu, repository);
+            ConsoleUI ui = new ConsoleUI(new Menu(repository), repository);
             ui.Start();
         }
     }

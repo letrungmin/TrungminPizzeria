@@ -9,7 +9,7 @@ namespace TrungminPizzeria
 {
     public class Order
     {
-        private static int _nextOrderId = 1; // Static field for auto-incrementing IDs
+        private static int _nextOrderId = 1;
 
         public int OrderId { get; }
         public Customer Customer { get; set; }
@@ -46,11 +46,15 @@ namespace TrungminPizzeria
             details.AppendLine($"Order ID: {OrderId}");
             details.AppendLine($"Customer: {Customer.Name} ({Customer.PhoneNumber})");
             details.AppendLine($"Address: {Address}");
-            details.AppendLine($"Pizzas:");
+            details.AppendLine($"Order Time: {OrderTime}");
+            details.AppendLine($"Status: {Status}");
+            details.AppendLine("Pizzas:");
+
             foreach (var pizza in Pizzas)
             {
                 details.AppendLine(pizza.GetOrderDetails());
             }
+
             details.AppendLine($"Total: ${CalculateTotalPrice():F2}");
             return details.ToString();
         }
@@ -58,7 +62,23 @@ namespace TrungminPizzeria
         public void UpdateStatus(OrderStatus newStatus)
         {
             Status = newStatus;
+            // Optionally, you could add logic here to trigger notifications 
+            // or other actions based on the status change (e.g., send a message to the kitchen).
+        }
+
+        // Additional methods you might want to add:
+        public void UpdateCustomerDetails(string name, string address, string phoneNumber)
+        {
+            Customer.Name = name;
+            Customer.Address = address;
+            Customer.PhoneNumber = phoneNumber;
+        }
+
+        public void CancelOrder()
+        {
+            UpdateStatus(OrderStatus.CANCELLED);
         }
     }
+
 
 }

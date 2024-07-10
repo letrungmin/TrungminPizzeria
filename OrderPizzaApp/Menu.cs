@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TrungminPizzeria
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class Menu
     {
-        private readonly List<MenuItem> menuItems;
+        private readonly List<MenuItem> menuItems = new List<MenuItem>();
         private readonly PizzaRepository pizzaRepository;
-
         public Menu(PizzaRepository pizzaRepository)
         {
             this.pizzaRepository = pizzaRepository;
-            menuItems = GenerateMenuItems();
+            GenerateMenuItems(); // Initialize menuItems
         }
 
-        private List<MenuItem> GenerateMenuItems()
+        private void GenerateMenuItems()
         {
-            var menuItems = new List<MenuItem>();
             var pizzas = pizzaRepository.GetAllPizzas();
             var toppings = pizzaRepository.GetAllToppings();
 
@@ -32,21 +24,24 @@ namespace TrungminPizzeria
                 foreach (var size in new[] { "Small", "Medium", "Large" })
                 {
                     var menuItem = new MenuItem(pizza, size);
-                    menuItem.AddDefaultToppings(toppings, pizza.Type); // Pass pizza type for default toppings
+                    menuItem.AddDefaultToppings(toppings, pizza.Type);
                     menuItems.Add(menuItem);
                 }
             }
-            return menuItems;
         }
 
         public List<MenuItem> GetMenuItemsByType(string type)
         {
-            return menuItems.Where(mi => mi.Pizza.Type.Equals(type, StringComparison.OrdinalIgnoreCase)).ToList();
+            return menuItems
+                .Where(mi => mi.Pizza.Type.Equals(type, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public List<MenuItem> GetMenuItemsBySize(string size)
         {
-            return menuItems.Where(mi => mi.Size.Equals(size, StringComparison.OrdinalIgnoreCase)).ToList();
+            return menuItems
+                .Where(mi => mi.Size.Equals(size, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public List<MenuItem> GetAllMenuItems()
@@ -69,8 +64,10 @@ namespace TrungminPizzeria
         public List<MenuItem> SearchByToppings(string toppingsCriteria)
         {
             string[] searchToppings = toppingsCriteria.Split(',').Select(t => t.Trim().ToLower()).ToArray();
-            return menuItems.Where(mi => searchToppings.All(t => mi.DefaultToppings.Any(dt => dt.Name.ToLower() == t))).ToList();
+            return menuItems
+                .Where(mi => searchToppings.All(t => mi.DefaultToppings.Any(dt => dt.Name.ToLower() == t)))
+                .ToList();
         }
     }
-
 }
+

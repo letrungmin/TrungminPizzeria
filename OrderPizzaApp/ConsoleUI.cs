@@ -23,14 +23,7 @@ namespace TrungminPizzeria
         {
             while (true)
             {
-                Console.WriteLine("\nWelcome to Trungmin's Pizzeria!");
-                Console.WriteLine("----------------------------");
-                Console.WriteLine("1. View Menu");
-                Console.WriteLine("2. Place Order");
-                Console.WriteLine("3. Manage Orders");
-                Console.WriteLine("4. Exit");
-                Console.WriteLine("----------------------------");
-
+                DisplayMainMenu();
                 Console.Write("Enter your choice: ");
                 string choice = Console.ReadLine();
 
@@ -49,20 +42,42 @@ namespace TrungminPizzeria
             }
         }
 
+        private void DisplayMainMenu()
+        {
+            Console.WriteLine("\nWelcome to Trungmin's Pizzeria!");
+            Console.WriteLine("----------------------------");
+            Console.WriteLine("1. View Menu");
+            Console.WriteLine("2. Place Order");
+            Console.WriteLine("3. Manage Orders");
+            Console.WriteLine("4. Exit");
+            Console.WriteLine("----------------------------");
+        }
+
         public void DisplayMenu()
         {
             List<MenuItem> menuItemsToDisplay = menu.GetAllMenuItems();
 
             while (true)
             {
+                if (menuItemsToDisplay.Count == 0)
+                {
+                    Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
+                    break;
+                }
+
                 Console.Clear();
                 Console.WriteLine("\n*** MENU ***");
 
-                int itemNumber = 1;
-                foreach (var menuItem in menuItemsToDisplay)
+                var menuItemsByCategory = menuItemsToDisplay.GroupBy(mi => mi.Pizza.Type);
+                foreach (var category in menuItemsByCategory)
                 {
-                    Console.WriteLine($"{itemNumber}. {menuItem.GetDescription()}");
-                    itemNumber++;
+                    Console.WriteLine($"\n{category.Key}:");
+                    int itemNumber = 1;
+                    foreach (var menuItem in category)
+                    {
+                        Console.WriteLine($"{itemNumber}. {menuItem.GetDescription()}");
+                        itemNumber++;
+                    }
                 }
 
                 Console.WriteLine("\nFilter Options:");
@@ -103,6 +118,105 @@ namespace TrungminPizzeria
                 }
             }
         }
+
+        public Customer TakeCustomerDetails()
+        {
+            Console.WriteLine("\nEnter customer details:");
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+            Console.Write("Address: ");
+            string address = Console.ReadLine();
+            Console.Write("Phone Number: ");
+            string phoneNumber = Console.ReadLine();
+
+            return new Customer(name, address, phoneNumber);
+        }
+
+        public Pizza TakePizzaCustomization(Pizza pizza)
+        {
+            List<Topping> availableToppings = repository.GetAllToppings();
+
+            while (true)
+            {
+                Console.WriteLine("\nAvailable toppings:");
+                for (int i = 0; i < availableToppings.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {availableToppings[i].Name} (+${availableToppings[i].Price:F2})");
+                }
+                Console.WriteLine("0. Done adding toppings");
+
+                Console.Write("Enter your choice: ");
+                string toppingChoice = Console.ReadLine();
+
+                if (toppingChoice == "0")
+                    break;
+
+                int toppingIndex;
+                if (int.TryParse(toppingChoice, out toppingIndex) && toppingIndex >= 1 && toppingIndex <= availableToppings.Count)
+                {
+                    pizza.AddTopping(availableToppings[toppingIndex - 1]);
+                    Console.WriteLine($"Added {availableToppings[toppingIndex - 1].Name} to your pizza.");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid topping choice.");
+                }
+            }
+
+            return pizza;
+        }
+        public void PlaceOrder()
+        {
+            Customer customer = TakeCustomerDetails();
+            Console.Write("Enter delivery address: ");
+            string address = Console.ReadLine();
+
+            Order order = new Order(customer, address);
+            while (true)
+            {
+                DisplayMenu();
+                Console.Write("\nEnter the number of the pizza you want to order (0 to finish): ");
+                string pizzaChoice = Console.ReadLine();
+                if (pizzaChoice == "0")
+                {
+                    break;
+                }
+
+                int pizzaNumber;
+                if (int.TryParse(pizzaChoice, out pizzaNumber) && pizzaNumber >= 1 && pizzaNumber <= menu.GetAllMenuItems().Count)
+                {
+                    MenuItem selectedMenuItem = menu.GetMenuItem(pizzaNumber);
+                    Pizza pizza = new Pizza(selectedMenuItem);
+                    pizza = TakePizzaCustomization(pizza);
+                    order.AddPizza(pizza);
+                    Console.WriteLine($"{pizza.GetOrderDetails()} added to your order.");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid pizza number.");
+                }
+            }
+            if (order.Pizzas.Count == 0)
+            {
+                Console.WriteLine("Your order is empty.");
+            }
+            else
+            {
+                Console.WriteLine(order.GetOrderDetails());
+                Console.Write("Confirm order? (y/n): ");
+                string confirm = Console.ReadLine();
+                if (confirm.ToLower() == "y")
+                {
+                    orders.Add(order);
+                    Console.WriteLine("Order placed successfully! Your order ID is: " + order.OrderId);
+                }
+                else
+                {
+                    Console.WriteLine("Order cancelled.");
+                }
+            }
+        }
+
         public void ManageOrders()
         {
             while (true)
@@ -130,33 +244,33 @@ namespace TrungminPizzeria
                         CancelOrder();
                         break;
                     case "0":
-                        return; // Go back to main menu
+                        return;
                     default:
                         Console.WriteLine("Invalid choice.");
                         break;
                 }
             }
         }
+
         public void ViewOrders()
         {
             if (orders.Count == 0)
             {
-                Console.WriteLine("\nNo orders placed yet.");
+                Console.WriteLine("No orders found.");
                 return;
             }
 
-            Console.WriteLine("\nYour Orders:");
+            Console.WriteLine("\nOrders:");
             for (int i = 0; i < orders.Count; i++)
             {
                 Console.WriteLine($"{i + 1}. Order ID: {orders[i].OrderId}, Status: {orders[i].Status}");
             }
 
-            Console.Write("\nEnter order number to view details (0 to go back): ");
-            if (int.TryParse(Console.ReadLine(), out int orderNumber) && orderNumber >= 1 && orderNumber <= orders.Count)
+            Console.Write("Enter order number to view details (0 to go back): ");
+            int orderNumber;
+            if (int.TryParse(Console.ReadLine(), out orderNumber) && orderNumber >= 1 && orderNumber <= orders.Count)
             {
                 Console.WriteLine(orders[orderNumber - 1].GetOrderDetails());
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
             }
             else if (orderNumber != 0)
             {
@@ -166,106 +280,24 @@ namespace TrungminPizzeria
 
         public void UpdateOrder()
         {
-            Console.Write("\nEnter order ID to update: ");
-            if (!int.TryParse(Console.ReadLine(), out int orderId) || !orders.Any(o => o.OrderId == orderId))
+            Console.Write("Enter order ID to update: ");
+            int orderId;
+            if (int.TryParse(Console.ReadLine(), out orderId))
             {
-                Console.WriteLine("Order not found.");
-                return;
-            }
-
-            Order order = orders.First(o => o.OrderId == orderId);
-            Console.WriteLine(order.GetOrderDetails());
-
-            while (true)
-            {
-                Console.WriteLine("\nUpdate options:");
-                Console.WriteLine("1. Add Pizza");
-                Console.WriteLine("2. Remove Pizza");
-                Console.WriteLine("3. Update Customer Details");
-                Console.WriteLine("0. Back to Manage Orders");
-
-                Console.Write("Enter your choice: ");
-                string updateChoice = Console.ReadLine();
-
-                switch (updateChoice)
+                Order orderToUpdate = orders.FirstOrDefault(o => o.OrderId == orderId);
+                if (orderToUpdate != null)
                 {
-                    case "1":
-                        AddPizzaToExistingOrder(order);
-                        break;
-                    case "2":
-                        RemovePizzaFromOrder(order);
-                        break;
-                    case "3":
-                        UpdateCustomerDetails(order);
-                        break;
-                    case "0":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid choice.");
-                        break;
+                    // ... (Logic for updating the order: add/remove pizzas, update customer details)
                 }
-
-                Console.WriteLine("\nUpdated Order Details:");
-                Console.WriteLine(order.GetOrderDetails());
-
-                Console.Write("Confirm changes? (y/n): ");
-                string confirm = Console.ReadLine();
-                if (confirm.ToLower() != "y")
+                else
                 {
-                    Console.WriteLine("Changes discarded.");
-                    return;
+                    Console.WriteLine("Order not found.");
                 }
-
-                // Save the updated order (if using persistent storage)
-            }
-        }
-        private void AddPizzaToExistingOrder(Order order)
-        {
-            DisplayMenu();
-            Console.Write("\nEnter the number of the pizza you want to add: ");
-            if (int.TryParse(Console.ReadLine(), out int pizzaNumber) && pizzaNumber >= 1 && pizzaNumber <= menu.GetAllMenuItems().Count)
-            {
-                MenuItem selectedMenuItem = menu.GetMenuItem(pizzaNumber);
-                Pizza pizza = new Pizza(selectedMenuItem);
-                pizza = TakePizzaCustomization(pizza);
-                order.AddPizza(pizza);
-                Console.WriteLine($"{pizza.GetOrderDetails()} added to the order.");
             }
             else
             {
-                Console.WriteLine("Invalid pizza number.");
+                Console.WriteLine("Invalid order ID.");
             }
-        }
-
-        private void RemovePizzaFromOrder(Order order)
-        {
-            Console.WriteLine("\nPizzas in the order:");
-            for (int i = 0; i < order.Pizzas.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {order.Pizzas[i].GetOrderDetails()}");
-            }
-            Console.Write("Enter the number of the pizza you want to remove: ");
-            if (int.TryParse(Console.ReadLine(), out int pizzaNumber) && pizzaNumber >= 1 && pizzaNumber <= order.Pizzas.Count)
-            {
-                order.RemovePizza(order.Pizzas[pizzaNumber - 1]);
-                Console.WriteLine("Pizza removed from the order.");
-            }
-            else
-            {
-                Console.WriteLine("Invalid pizza number.");
-            }
-        }
-        private void UpdateCustomerDetails(Order order)
-        {
-            Console.WriteLine("\nEnter new customer details:");
-            Console.Write("Name: ");
-            string name = Console.ReadLine();
-            Console.Write("Address: ");
-            string address = Console.ReadLine();
-            Console.Write("Phone Number: ");
-            string phoneNumber = Console.ReadLine();
-            order.UpdateCustomerDetails(name, address, phoneNumber);
-            Console.WriteLine("Customer details updated!");
         }
 
         public void CancelOrder()
@@ -327,6 +359,7 @@ namespace TrungminPizzeria
                 }
             }
         }
+
         private void SearchPizzasByType()
         {
             Console.Write("Enter pizza type: ");

@@ -113,11 +113,6 @@ namespace TrungminPizzeria
                         Console.Write("Enter toppings (comma-separated): ");
                         string toppingsCriteria = Console.ReadLine();
                         menuItemsToDisplay = menu.SearchByToppings(toppingsCriteria);
-                        if (menuItemsToDisplay == null || menuItemsToDisplay.Count == 0)
-                        {
-                            Console.WriteLine("No pizzas found with those toppings.");
-                            continue; // Stay in the filtering loop to allow another search
-                        }
                         break;
                     case "4":
                         menuItemsToDisplay = menu.GetAllMenuItems();

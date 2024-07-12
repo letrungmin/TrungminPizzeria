@@ -1,37 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+using TrungminPizzeria;
 
-namespace TrungminPizzeria
+public class PizzaRepository
 {
-    public class PizzaRepository
+    private List<Pizza> _pizzas = new List<Pizza>();
+    private List<Topping> _toppings = new List<Topping>();
+    private const string PIZZA_FILE = "pizzas.json";
+    private const string TOPPINGS_FILE = "toppings.json";
+    private static readonly object _fileLock = new object();
+
+    public PizzaRepository()
     {
-        private List<Pizza> pizzas = new List<Pizza>();
-        private List<Topping> toppings = new List<Topping>();
-
-        public PizzaRepository()
-        {
-            LoadPizzasFromFile("pizzas.json");
-            LoadToppingsFromFile("toppings.json");
-        }
-
-        public List<Pizza> GetAllPizzas() => pizzas;
-        public List<Topping> GetAllToppings() => toppings;
-
-        public Pizza GetPizza(string type, string size)
-        {
-            return pizzas.FirstOrDefault(p =>
-                p.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
-                p.Size.Equals(size, StringComparison.OrdinalIgnoreCase)
-            );
-        }
-
-
-        // Methods for loading and saving pizzas and toppings from JSON files
-        // ... (Use JsonConvert.DeserializeObject and JsonConvert.SerializeObject)
+        LoadData();
     }
 
+    private void LoadData()
+    {
+        LoadPizzasFromFile(PIZZA_FILE); // Load pizzas from file
+        LoadToppingsFromFile(TOPPINGS_FILE); // Load toppings from file
+    }
+
+    public List<Pizza> GetAllPizzas() => _pizzas;
+
+    public List<Topping> GetAllToppings() => _toppings;
+
+    public Pizza GetPizza(string type, string size)
+    {
+        return _pizzas.FirstOrDefault(p =>
+            p.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
+            p.Size.Equals(size, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void LoadPizzasFromFile(string filePath)
+    {
+        lock (_fileLock)
+        {
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(filePath);
+                    _pizzas = JsonConvert.DeserializeObject<List<Pizza>>(json);
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"Error: Invalid JSON format in pizzas file: {ex.Message}");
+                    // Handle the error (e.g., create default pizzas)
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: Pizzas file '{filePath}' not found. Using default pizzas.");
+                _pizzas = CreateDefaultPizzas();
+            }
+        }
+    }
+
+    private List<Pizza> CreateDefaultPizzas()
+    {
+        return new List<Pizza>
+        {
+            new Pizza("Margherita", "Small"),
+            new Pizza("Pepperoni", "Medium"),
+            new Pizza("Veggie", "Large")
+            // ... add other default pizza instances
+        };
+    }
+
+    private void LoadToppingsFromFile(string filePath)
+    {
+        lock (_fileLock)
+        {
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(filePath);
+                    _toppings = JsonConvert.DeserializeObject<List<Topping>>(json);
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"Error: Invalid JSON format in toppings file: {ex.Message}");
+                    // Handle the error (e.g., create default toppings)
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Error: Toppings file '{filePath}' not found. Using default toppings.");
+                _toppings = CreateDefaultToppings();
+            }
+        }
+    }
+
+    private List<Topping> CreateDefaultToppings()
+    {
+        return new List<Topping>
+        {
+            new Topping("Extra Cheese", 1.00m),
+            new Topping("Pepperoni", 1.50m),
+            
+        };
+    }
 }

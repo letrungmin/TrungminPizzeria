@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TrungminPizzeria;
 
 namespace TrungminPizzeria
 {
@@ -62,16 +61,12 @@ namespace TrungminPizzeria
         public void UpdateStatus(OrderStatus newStatus)
         {
             Status = newStatus;
-            // Optionally, you could add logic here to trigger notifications 
-            // or other actions based on the status change (e.g., send a message to the kitchen).
         }
 
-        // Additional methods you might want to add:
         public void UpdateCustomerDetails(string name, string address, string phoneNumber)
         {
-            Customer.Name = name;
-            Customer.Address = address;
-            Customer.PhoneNumber = phoneNumber;
+            // Create a new Customer object with the updated details
+            Customer = new Customer(name, address, phoneNumber);
         }
 
         public void CancelOrder()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TrungminPizzeria;
 
 namespace TrungminPizzeria
 {
@@ -19,26 +18,60 @@ namespace TrungminPizzeria
             Size = size;
         }
 
-        public void AddDefaultTopping(Topping topping)
+        public void AddDefaultToppings(List<Topping> allToppings, string pizzaType)
         {
-            DefaultToppings.Add(topping);
+            // Ensure allToppings is not null and contains items
+            if (allToppings == null || allToppings.Count == 0)
+            {
+                Console.WriteLine("Error: No toppings available to add to the menu item.");
+                return;
+            }
+
+            switch (pizzaType.ToLower())
+            {
+                case "margherita":
+                    DefaultToppings.AddRange(allToppings.Where(t =>
+                        t.Name.Equals("Mozzarella", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Tomato Sauce", StringComparison.OrdinalIgnoreCase)));
+                    break;
+                case "pepperoni":
+                    DefaultToppings.AddRange(allToppings.Where(t =>
+                        t.Name.Equals("Mozzarella", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Tomato Sauce", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Pepperoni", StringComparison.OrdinalIgnoreCase)));
+                    break;
+                case "veggie":
+                    DefaultToppings.AddRange(allToppings.Where(t =>
+                        t.Name.Equals("Mozzarella", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Tomato Sauce", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Mushrooms", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Onions", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Bell Peppers", StringComparison.OrdinalIgnoreCase)));
+                    break;
+                default:
+                    throw new ArgumentException("Invalid pizza type.");
+            }
         }
 
         public decimal GetPrice()
         {
-            decimal price = Pizza.Price;
+            decimal price = Pizza.Price; // Base price from the Pizza object
+
+            // Add the price of each default topping
             foreach (var topping in DefaultToppings)
             {
                 price += topping.Price;
             }
+
             return price;
         }
 
         public string GetDescription()
         {
-            string toppingsString = string.Join(", ", DefaultToppings.Select(t => t.Name));
+            string toppingsString = DefaultToppings.Count > 0
+                ? string.Join(", ", DefaultToppings.Select(t => t.Name))
+                : "no toppings";
             return $"{Size} {Pizza.Type} Pizza with {toppingsString} - ${GetPrice():F2}";
         }
     }
-
 }

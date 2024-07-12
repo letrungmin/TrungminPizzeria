@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
+using TrungminPizzeria;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TrungminPizzeria
+public class Pizza
 {
-    public class Pizza
-    {
-        public string Type { get; }
-        public string Size { get; }
-        public List<Topping> Toppings { get; } = new List<Topping>();
-        public decimal Price { get; private set; } // Calculated dynamically
+    public string Type { get; }
+    public string Size { get; }
+    public List<Topping> Toppings { get; } = new List<Topping>();
+    public decimal Price { get; private set; }
 
-        private static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
+    // Nested dictionary for base prices (unchanged)
+    private static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
     {
         { "margherita", new Dictionary<string, decimal> { { "small", 8.00m }, { "medium", 10.00m }, { "large", 12.00m } } },
         { "pepperoni", new Dictionary<string, decimal> { { "small", 10.00m }, { "medium", 12.00m }, { "large", 14.00m } } },
@@ -21,67 +19,65 @@ namespace TrungminPizzeria
         // Add more pizza types and their base prices here
     };
 
-        // Constructor for creating a new pizza from scratch
-        public Pizza(string type, string size)
+    // Constructors
+    public Pizza(string type, string size)
+    {
+        Type = type?.ToLower() ?? ""; // Convert type to lowercase and handle null
+        Size = size?.ToLower() ?? ""; // Convert size to lowercase and handle null
+
+        // Validate type and size
+        if (!basePrices.ContainsKey(Type) || !basePrices[Type].ContainsKey(Size))
         {
-            Type = type;
-            Size = size;
-            CalculatePrice();
+            throw new ArgumentException("Invalid pizza type or size.");
         }
 
-        // Constructor for creating a pizza from existing pizza object
-        public Pizza(Pizza pizza)
-        {
-            Type = pizza.Type;
-            Size = pizza.Size;
-            Toppings = pizza.Toppings;
-            CalculatePrice();
-        }
+        CalculatePrice();
+    }
 
-        // Constructor for creating a pizza from a MenuItem
-        public Pizza(MenuItem menuItem)
-        {
-            Type = menuItem.Pizza.Type;
-            Size = menuItem.Size;
-            // Add the default toppings from MenuItem
-            foreach (var topping in menuItem.DefaultToppings)
-            {
-                AddTopping(topping);
-            }
-            CalculatePrice();
-        }
-        public void AddTopping(Topping topping)
-        {
-            Toppings.Add(topping);
-            CalculatePrice();
-        }
+    public Pizza(Pizza pizza) : this(pizza.Type, pizza.Size)  // Use 'this' to call the main constructor
+    {
+        Toppings = new List<Topping>(pizza.Toppings); // Deep copy the toppings list
+        CalculatePrice();
+    }
 
-        public void RemoveTopping(Topping topping)
+    public Pizza(MenuItem menuItem) : this(menuItem.Pizza) // Use 'this' to call the copy constructor
+    {
+        foreach (var topping in menuItem.DefaultToppings)
         {
-            Toppings.Remove(topping);
-            CalculatePrice();
-        }
-
-        private void CalculatePrice()
-        {
-            // Ensure the pizza type and size are valid before accessing base prices
-            if (!basePrices.ContainsKey(Type.ToLower()) || !basePrices[Type.ToLower()].ContainsKey(Size.ToLower()))
-            {
-                throw new ArgumentException("Invalid pizza type or size.");
-            }
-
-            Price = basePrices[Type.ToLower()][Size.ToLower()]; // Get base price based on type and size
-            Price += Toppings.Sum(t => t.Price); // Add topping prices
-        }
-
-        public string GetOrderDetails()
-        {
-            string toppingsString = Toppings.Count > 0
-                ? string.Join(", ", Toppings.Select(t => t.Name))
-                : "no toppings";
-            return $"{Size} {Type} Pizza with {toppingsString} - ${Price:F2}";
+            AddTopping(topping);
         }
     }
 
+    public void AddTopping(Topping topping)
+    {
+        Toppings.Add(topping);
+        CalculatePrice();
+    }
 
+    public void RemoveTopping(Topping topping)
+    {
+        Toppings.Remove(topping);
+        CalculatePrice();
+    }
+
+    private void CalculatePrice()
+    {
+        // Ensure the pizza type and size are valid before accessing base prices
+        if (!basePrices.ContainsKey(Type) || !basePrices[Type].ContainsKey(Size))
+        {
+            throw new ArgumentException("Invalid pizza type or size.");
+        }
+
+        Price = basePrices[Type][Size]; // Get base price
+        Price += Toppings.Sum(t => t.Price); // Add topping prices
+    }
+
+    public string GetOrderDetails()
+    {
+        string toppingsString = Toppings.Count > 0
+            ? string.Join(", ", Toppings.Select(t => t.Name))
+            : "no toppings";
+        return $"{Size} {Type} Pizza with {toppingsString} - ${Price:F2}";
+    }
 }
+

@@ -64,8 +64,10 @@ public class PizzaRepository
         return new List<Pizza>
         {
             new Pizza("Margherita", "Small"),
-            new Pizza("Pepperoni", "Medium"),
-            new Pizza("Veggie", "Large")
+            new Pizza("Pepperoni", "Large"),
+            new Pizza("Veggie", "Large"),
+            new Pizza("Hawaiian", "Large")
+            //new Pizza("BBQ Chicken", "Large")
             // ... add other default pizza instances
         };
     }
@@ -102,6 +104,7 @@ public class PizzaRepository
         {
             new Topping("Extra Cheese", 1.00m),
             new Topping("Pepperoni", 1.50m),
+            new Topping("Onion", 0.50m)
             // ... add other default topping instances
         };
     }

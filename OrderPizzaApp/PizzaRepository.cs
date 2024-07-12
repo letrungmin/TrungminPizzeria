@@ -30,9 +30,7 @@ public class PizzaRepository
 
     public Pizza GetPizza(string type, string size)
     {
-        return _pizzas.FirstOrDefault(p =>
-            p.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
-            p.Size.Equals(size, StringComparison.OrdinalIgnoreCase));
+        return _pizzas.FirstOrDefault(p => p.Type.Equals(type, StringComparison.OrdinalIgnoreCase) && p.Size.Equals(size, StringComparison.OrdinalIgnoreCase));
     }
 
     private void LoadPizzasFromFile(string filePath)
@@ -50,6 +48,7 @@ public class PizzaRepository
                 {
                     Console.WriteLine($"Error: Invalid JSON format in pizzas file: {ex.Message}");
                     // Handle the error (e.g., create default pizzas)
+                    _pizzas = CreateDefaultPizzas();
                 }
             }
             else
@@ -86,6 +85,7 @@ public class PizzaRepository
                 {
                     Console.WriteLine($"Error: Invalid JSON format in toppings file: {ex.Message}");
                     // Handle the error (e.g., create default toppings)
+                    _toppings = CreateDefaultToppings();
                 }
             }
             else
@@ -102,7 +102,8 @@ public class PizzaRepository
         {
             new Topping("Extra Cheese", 1.00m),
             new Topping("Pepperoni", 1.50m),
-            
+            // ... add other default topping instances
         };
     }
 }
+

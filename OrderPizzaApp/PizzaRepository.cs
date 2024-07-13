@@ -59,18 +59,20 @@ public class PizzaRepository
         }
     }
 
+    // Trong PizzaRepository.cs
     private List<Pizza> CreateDefaultPizzas()
     {
-        return new List<Pizza>
-        {
-            new Pizza("Margherita", "Small"),
-            new Pizza("Pepperoni", "Large"),
-            new Pizza("Veggie", "Large"),
-            new Pizza("Hawaiian", "Large")
-            //new Pizza("BBQ Chicken", "Large")
-            // ... add other default pizza instances
-        };
+        var toppings = GetAllToppings();
+        return new List<Pizza>()
+    {
+        new Pizza(new MenuItem(new Pizza("Margherita", "Small"), "Small")), // Sử dụng hàm tạo từ MenuItem
+        new Pizza(new MenuItem(new Pizza("Pepperoni", "Medium"), "Medium")), // Sử dụng hàm tạo từ MenuItem
+        new Pizza(new MenuItem(new Pizza("Veggie", "Large"), "Large")), // Sử dụng hàm tạo từ MenuItem
+        new Pizza(new MenuItem(new Pizza("Hawaiian", "Large"), "Large")), // Sử dụng hàm tạo từ MenuItem
+        // ... add other default pizza instances
+    };
     }
+
 
     private void LoadToppingsFromFile(string filePath)
     {
@@ -103,8 +105,8 @@ public class PizzaRepository
         return new List<Topping>
         {
             new Topping("Extra Cheese", 1.00m),
-            new Topping("Pepperoni", 1.50m),
-            new Topping("Onion", 0.50m)
+            //new Topping("Pepperoni", 1.50m)
+            //new Topping("Onion", 0.50m)
             // ... add other default topping instances
         };
     }

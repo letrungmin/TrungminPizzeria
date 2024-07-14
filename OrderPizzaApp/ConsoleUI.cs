@@ -26,9 +26,15 @@ namespace TrungminPizzeria
 
                 switch (choice)
                 {
-                    case "1": DisplayMenu(); break;
-                    case "2": PlaceOrder(); break;
-                    case "3": ManageOrders(); break;
+                    case "1":
+                        DisplayMenu();
+                        break;
+                    case "2":
+                        PlaceOrder();
+                        break;
+                    case "3":
+                        ManageOrders();
+                        break;
                     case "4":
                         Console.WriteLine("Thank you for visiting Trungmin's Pizzeria!");
                         return;
@@ -38,7 +44,6 @@ namespace TrungminPizzeria
                 }
             }
         }
-
         private void DisplayMainMenu()
         {
             Console.WriteLine("\nWelcome to Trungmin's Pizzeria!");
@@ -53,26 +58,30 @@ namespace TrungminPizzeria
         public void DisplayMenu()
         {
             List<MenuItem> menuItemsToDisplay = menu.GetAllMenuItems();
+            List<MenuItem> filteredMenuItems = menuItemsToDisplay.ToList(); // Tạo một bản sao để lưu kết quả lọc
 
             while (true)
             {
-                if (menuItemsToDisplay.Count == 0)
+                if (filteredMenuItems.Count == 0) // Kiểm tra danh sách đã lọc
                 {
-                    Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
-                    break; // Exit the display loop
+                    Console.WriteLine("\nNo pizzas match your criteria.");
+                    Console.WriteLine("Press any key to clear filters and return to the menu...");
+                    Console.ReadKey();
+                    filteredMenuItems = menu.GetAllMenuItems().ToList(); // Reset lại bộ lọc
+                    continue;
                 }
 
                 Console.Clear();
                 Console.WriteLine("\n*** MENU ***");
 
-                var menuItemsByCategory = menuItemsToDisplay.GroupBy(mi => mi.Pizza?.Type ?? "Unknown"); // Handle potential null Pizza
+                var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown"); // Group by trên filteredMenuItems
                 foreach (var category in menuItemsByCategory)
                 {
-                    Console.WriteLine($"\n{category.Key}:"); // Display category header
+                    Console.WriteLine($"\n{category.Key}:");
                     int itemNumber = 1;
                     foreach (var menuItem in category)
                     {
-                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Handle potential null menuItem
+                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}");
                         itemNumber++;
                     }
                 }
@@ -92,30 +101,20 @@ namespace TrungminPizzeria
                     case "1":
                         Console.Write("Enter pizza type: ");
                         string type = Console.ReadLine();
-                        menuItemsToDisplay = menu.GetMenuItemsByType(type);
-                        if (menuItemsToDisplay == null || menuItemsToDisplay.Count == 0)
-                        {
-                            Console.WriteLine("No pizzas found with that type.");
-                            continue; // Stay in the filtering loop to allow another search
-                        }
+                        filteredMenuItems = filteredMenuItems.Where(mi => mi.Pizza.Type.Equals(type, StringComparison.OrdinalIgnoreCase)).ToList(); // Lọc trên filteredMenuItems
                         break;
                     case "2":
                         Console.Write("Enter pizza size (Small, Medium, Large): ");
                         string size = Console.ReadLine();
-                        menuItemsToDisplay = menu.GetMenuItemsBySize(size);
-                        if (menuItemsToDisplay == null || menuItemsToDisplay.Count == 0)
-                        {
-                            Console.WriteLine("No pizzas found with that size.");
-                            continue; // Stay in the filtering loop to allow another search
-                        }
+                        filteredMenuItems = filteredMenuItems.Where(mi => mi.Size.Equals(size, StringComparison.OrdinalIgnoreCase)).ToList(); // Lọc trên filteredMenuItems
                         break;
                     case "3":
                         Console.Write("Enter toppings (comma-separated): ");
                         string toppingsCriteria = Console.ReadLine();
-                        menuItemsToDisplay = menu.SearchByToppings(toppingsCriteria);
+                        filteredMenuItems = filteredMenuItems.Where(mi => menu.SearchByToppings(toppingsCriteria).Contains(mi)).ToList(); // Lọc trên filteredMenuItems
                         break;
                     case "4":
-                        menuItemsToDisplay = menu.GetAllMenuItems();
+                        filteredMenuItems = menu.GetAllMenuItems().ToList(); // Reset filters
                         break;
                     case "0":
                         return;
@@ -123,8 +122,17 @@ namespace TrungminPizzeria
                         Console.WriteLine("Invalid filter choice.");
                         break;
                 }
+
+                menuItemsToDisplay = filteredMenuItems; // Cập nhật danh sách hiển thị
             }
+
+            // In thông báo nếu không có pizza nào khớp với tiêu chí lọc
+            // Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
         }
+
+
+
+
 
         public Customer TakeCustomerDetails()
         {
@@ -146,7 +154,7 @@ namespace TrungminPizzeria
             while (true)
             {
                 Console.WriteLine("\nAvailable toppings:");
-                for (int i = 0; i < availableToppings.Count; i++)
+                for (int i = 0; i < availableToppings.Count; i++) // Đảm bảo duyệt qua tất cả các topping
                 {
                     Console.WriteLine($"{i + 1}. {availableToppings[i].Name} (+${availableToppings[i].Price:F2})");
                 }
@@ -174,9 +182,11 @@ namespace TrungminPizzeria
 
         public void PlaceOrder()
         {
+            // Lấy thông tin khách hàng
             Customer customer = TakeCustomerDetails();
             Console.Write("Enter delivery address: ");
             string address = Console.ReadLine();
+
             Order order = new Order(customer, address);
 
             while (true)
@@ -195,11 +205,11 @@ namespace TrungminPizzeria
                 if (!int.TryParse(pizzaChoiceStr, out int pizzaIndex) || pizzaIndex < 1 || pizzaIndex > menu.GetAllMenuItems().Count)
                 {
                     Console.WriteLine("Invalid pizza number. Please enter a valid number from the menu.");
-                    continue; // Tiếp tục vòng lặp nếu lựa chọn không hợp lệ
+                    continue;
                 }
 
                 // Lấy MenuItem dựa trên lựa chọn của người dùng
-                MenuItem selectedMenuItem = menu.GetMenuItem(pizzaIndex);
+                MenuItem selectedMenuItem = menu.GetAllMenuItems()[pizzaIndex - 1];
 
                 // Hiển thị các size pizza có sẵn và yêu cầu người dùng chọn
                 Console.WriteLine($"\nYou selected a {selectedMenuItem.Pizza.Type} pizza. Choose a size:");
@@ -214,23 +224,13 @@ namespace TrungminPizzeria
                 if (!int.TryParse(Console.ReadLine(), out sizeChoice) || sizeChoice < 1 || sizeChoice > sizes.Length)
                 {
                     Console.WriteLine("Invalid size choice.");
-                    continue; // Tiếp tục vòng lặp nếu lựa chọn không hợp lệ
+                    continue;
                 }
 
                 string selectedSize = sizes[sizeChoice - 1];
 
-                // Tìm kiếm MenuItem chính xác dựa trên loại và kích thước pizza
-                selectedMenuItem = menu.GetAllMenuItems().FirstOrDefault(item =>
-                    item.Pizza.Type == selectedMenuItem.Pizza.Type && item.Size == selectedSize);
-
-                if (selectedMenuItem == null)
-                {
-                    Console.WriteLine("Invalid pizza and size combination.");
-                    continue;
-                }
-
-                // Tạo một Pizza mới dựa trên MenuItem đã chọn
-                Pizza pizza = new Pizza(selectedMenuItem);
+                // Tạo một Pizza mới dựa trên MenuItem đã chọn và kích thước đã chọn
+                Pizza pizza = new Pizza(selectedMenuItem.Pizza.Type, selectedSize);
 
                 // Cho phép tùy chỉnh topping
                 pizza = TakePizzaCustomization(pizza);
@@ -263,6 +263,75 @@ namespace TrungminPizzeria
                 {
                     Console.WriteLine("Order cancelled.");
                 }
+            }
+        }
+
+
+
+
+
+
+
+
+
+        public void ManageOrders()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("\nOrder Management:");
+                Console.WriteLine("----------------");
+                Console.WriteLine("1. View Orders");
+                Console.WriteLine("2. Update Order");
+                Console.WriteLine("3. Cancel Order");
+                Console.WriteLine("0. Back to Main Menu");
+
+                Console.Write("Enter your choice: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ViewOrders();
+                        break;
+                    case "2":
+                        UpdateOrder();
+                        break;
+                    case "3":
+                        CancelOrder();
+                        break;
+                    case "0":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+            }
+        }
+
+        public void ViewOrders()
+        {
+            if (orders.Count == 0)
+            {
+                Console.WriteLine("No orders found.");
+                return;
+            }
+
+            Console.WriteLine("\nOrders:");
+            for (int i = 0; i < orders.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. Order ID: {orders[i].OrderId}, Status: {orders[i].Status}");
+            }
+
+            Console.Write("Enter order number to view details (0 to go back): ");
+            int orderNumber;
+            if (int.TryParse(Console.ReadLine(), out orderNumber) && orderNumber >= 1 && orderNumber <= orders.Count)
+            {
+                Console.WriteLine(orders[orderNumber - 1].GetOrderDetails());
+            }
+            else if (orderNumber != 0)
+            {
+                Console.WriteLine("Invalid order number.");
             }
         }
 
@@ -303,8 +372,11 @@ namespace TrungminPizzeria
                     case "4":
                         UpdateOrderStatus(orderToUpdate);
                         break;
-                    case "0": return;
-                    default: Console.WriteLine("Invalid choice."); break;
+                    case "0":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
                 }
 
                 // Update the order in the list
@@ -315,10 +387,12 @@ namespace TrungminPizzeria
         private void AddPizzaToExistingOrder(Order order)
         {
             DisplayMenu();
+
             Console.Write("\nEnter the number of the pizza you want to add (0 to cancel): ");
             string pizzaChoice = Console.ReadLine();
+
             if (pizzaChoice == "0")
-                return;
+                return; // Exit if the user cancels
 
             int pizzaNumber;
             if (int.TryParse(pizzaChoice, out pizzaNumber) && pizzaNumber >= 1 && pizzaNumber <= menu.GetAllMenuItems().Count)
@@ -491,5 +565,6 @@ namespace TrungminPizzeria
                 }
             }
         }
+
     }
 }

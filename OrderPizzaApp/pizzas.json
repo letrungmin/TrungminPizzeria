@@ -1,14 +1,17 @@
 [
   {
     "Type": "Margherita",
-    "Price": 8.00
+    "Price": 8.00,
+    "Size": "Small"
   },
   {
     "Type": "Pepperoni",
-    "Price": 10.00
+    "Price": 10.00,
+    "Size": "Medium"
   },
   {
     "Type": "Veggie",
-    "Price": 9.50
+    "Price": 9.50,
+    "Size": "Large"
   }
 ]

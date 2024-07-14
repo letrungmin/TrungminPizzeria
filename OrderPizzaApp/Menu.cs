@@ -24,7 +24,7 @@ public class Menu
             foreach (var size in new[] { "Small", "Medium", "Large" })
             {
                 var menuItem = new MenuItem(pizza, size);
-                menuItem.AddDefaultToppings(toppings, pizza.Type);
+                //menuItem.AddDefaultToppings(toppings, pizza.Type);
                 menuItems.Add(menuItem);
             }
         }

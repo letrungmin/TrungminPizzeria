@@ -13,7 +13,7 @@ public class Pizza
     public decimal Price { get; private set; }
 
     // Nested dictionary for base prices (unchanged)
-    private static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
+    public static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
     {
         { "margherita", new Dictionary<string, decimal> { { "small", 8.00m }, { "medium", 10.00m }, { "large", 12.00m } } },
         { "pepperoni", new Dictionary<string, decimal> { { "small", 10.00m }, { "medium", 12.00m }, { "large", 14.00m } } },
@@ -40,13 +40,14 @@ public class Pizza
         CalculatePrice();
     }
 
-
+    [JsonConstructor]
     public Pizza(Pizza pizza) : this(pizza.Type, pizza.Size)  // Use 'this' to call the main constructor
     {
         Toppings = new List<Topping>(pizza.Toppings); // Deep copy the toppings list
         CalculatePrice();
     }
 
+    [JsonConstructor]
     public Pizza(MenuItem menuItem) : this(menuItem.Pizza) // Use 'this' to call the copy constructor
     {
         foreach (var topping in menuItem.DefaultToppings)

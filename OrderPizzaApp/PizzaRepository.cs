@@ -60,7 +60,7 @@ public class PizzaRepository
     }
 
     // Trong PizzaRepository.cs
-    private List<Pizza> CreateDefaultPizzas()
+    public List<Pizza> CreateDefaultPizzas()
     {
         var toppings = GetAllToppings();
         return new List<Pizza>()
@@ -100,7 +100,7 @@ public class PizzaRepository
         }
     }
 
-    private List<Topping> CreateDefaultToppings()
+    public List<Topping> CreateDefaultToppings()
     {
         return new List<Topping>
         {

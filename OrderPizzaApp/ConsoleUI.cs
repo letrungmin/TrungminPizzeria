@@ -6,9 +6,9 @@ namespace TrungminPizzeria
 {
     public class ConsoleUI
     {
-        private readonly Menu menu;
-        private readonly PizzaRepository repository;
-        private readonly List<Order> orders = new List<Order>();
+        public readonly Menu menu;
+        public readonly PizzaRepository repository;
+        public readonly List<Order> orders = new List<Order>();
 
         public ConsoleUI(Menu menu, PizzaRepository repository)
         {
@@ -44,7 +44,7 @@ namespace TrungminPizzeria
                 }
             }
         }
-        private void DisplayMainMenu()
+        public void DisplayMainMenu()
         {
             Console.WriteLine("\nWelcome to Trungmin's Pizzeria!");
             Console.WriteLine("----------------------------");
@@ -384,7 +384,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void AddPizzaToExistingOrder(Order order)
+        public void AddPizzaToExistingOrder(Order order)
         {
             DisplayMenu();
 
@@ -409,7 +409,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void RemovePizzaFromOrder(Order order)
+        public void RemovePizzaFromOrder(Order order)
         {
             Console.WriteLine("\nPizzas in the order:");
             for (int i = 0; i < order.Pizzas.Count; i++)
@@ -435,7 +435,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void UpdateCustomerDetails(Order order)
+        public void UpdateCustomerDetails(Order order)
         {
             Console.WriteLine("\nEnter new customer details:");
             Console.Write("Name: ");
@@ -449,7 +449,7 @@ namespace TrungminPizzeria
             Console.WriteLine("Customer details updated!");
         }
 
-        private void UpdateOrderStatus(Order order)
+        public void UpdateOrderStatus(Order order)
         {
             Console.WriteLine("\nCurrent order status: " + order.Status);
             Console.WriteLine("Enter new status (Placed, Preparing, Baking, Out for Delivery, Delivered, Cancelled):");

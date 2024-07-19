@@ -6,11 +6,12 @@ namespace TrungminPizzeria
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static Task Main(string[] args)
         {
             PizzaRepository repository = new PizzaRepository();
             ConsoleUI ui = new ConsoleUI(new Menu(repository), repository);
             ui.Start();
+            return Task.CompletedTask;
         }
     }
 }

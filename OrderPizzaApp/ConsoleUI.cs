@@ -131,9 +131,6 @@ namespace TrungminPizzeria
         }
 
 
-
-
-
         public Customer TakeCustomerDetails()
         {
             Console.WriteLine("\nEnter customer details:");
@@ -265,13 +262,6 @@ namespace TrungminPizzeria
                 }
             }
         }
-
-
-
-
-
-
-
 
 
         public void ManageOrders()
@@ -492,39 +482,6 @@ namespace TrungminPizzeria
             }
         }
 
-        public void SearchPizzas()
-        {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("\nSearch Pizzas:");
-                Console.WriteLine("----------------");
-                Console.WriteLine("1. Search by Type");
-                Console.WriteLine("2. Search by Size");
-                Console.WriteLine("3. Search by Toppings");
-                Console.WriteLine("0. Back to Main Menu");
-                Console.Write("Enter your choice: ");
-
-                string searchChoice = Console.ReadLine();
-                switch (searchChoice)
-                {
-                    case "1":
-                        SearchPizzasByType();
-                        break;
-                    case "2":
-                        SearchPizzasBySize();
-                        break;
-                    case "3":
-                        SearchPizzasByToppings();
-                        break;
-                    case "0":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid choice.");
-                        break;
-                }
-            }
-        }
 
         private void SearchPizzasByType()
         {

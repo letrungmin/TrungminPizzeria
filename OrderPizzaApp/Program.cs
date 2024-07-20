@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks; // For Task.Delay() if you want to add a delay between menu options
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace TrungminPizzeria

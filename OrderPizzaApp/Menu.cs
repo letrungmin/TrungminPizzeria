@@ -14,7 +14,7 @@ public class Menu
         GenerateMenuItems();
     }
 
-    private void GenerateMenuItems()
+    public void GenerateMenuItems()
     {
         var pizzas = pizzaRepository.GetAllPizzas();
         var toppings = pizzaRepository.GetAllToppings();

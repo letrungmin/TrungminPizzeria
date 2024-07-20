@@ -19,8 +19,6 @@ public class Pizza
         { "pepperoni", new Dictionary<string, decimal> { { "small", 10.00m }, { "medium", 12.00m }, { "large", 14.00m } } },
         { "veggie", new Dictionary<string, decimal> { { "small", 9.50m }, { "medium", 11.50m }, { "large", 13.50m } } },
         { "hawaiian", new Dictionary<string, decimal> { { "small", 10.50m }, { "medium", 13.00m }, { "large", 15.50m } } }
-        //{ "BBQ Chicken", new Dictionary<string, decimal> { { "small", 12.00m }, { "medium", 14.00m }, { "large", 16.50m } } }
-        // Add more pizza types and their base prices here
     };
 
     // Constructors
@@ -40,7 +38,7 @@ public class Pizza
         CalculatePrice();
     }
 
-    [JsonConstructor]
+    
     public Pizza(Pizza pizza) : this(pizza.Type, pizza.Size)  // Use 'this' to call the main constructor
     {
         Toppings = new List<Topping>(pizza.Toppings); // Deep copy the toppings list
@@ -84,7 +82,7 @@ public class Pizza
     {
         string toppingsString = Toppings.Count > 0
             ? string.Join(", ", Toppings.Select(t => t.Name))
-            : "no toppings";
+            : "no extra toppings";
         return $"{Size} {Type} Pizza with {toppingsString} - ${Price:F2}";
     }
 }

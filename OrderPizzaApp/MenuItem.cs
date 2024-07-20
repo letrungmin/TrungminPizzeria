@@ -48,6 +48,14 @@ namespace TrungminPizzeria
                         t.Name.Equals("Onions", StringComparison.OrdinalIgnoreCase) ||
                         t.Name.Equals("Bell Peppers", StringComparison.OrdinalIgnoreCase)));
                     break;
+                case "hawaiian":
+                    DefaultToppings.AddRange(allToppings.Where(t =>
+                        t.Name.Equals("Mozzarella", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Tomato Sauce", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Mushrooms", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Onions", StringComparison.OrdinalIgnoreCase) ||
+                        t.Name.Equals("Bell Peppers", StringComparison.OrdinalIgnoreCase)));
+                    break;
                 default:
                     throw new ArgumentException("Invalid pizza type.");
             }
@@ -55,9 +63,10 @@ namespace TrungminPizzeria
 
         public decimal GetPrice()
         {
-            decimal price = Pizza.Price; // Base price from the Pizza object
+            // Lấy giá cơ bản từ lớp Pizza dựa trên loại và kích thước
+            decimal price = Pizza.basePrices[Pizza.Type.ToLower()][Size.ToLower()];
 
-            // Add the price of each default topping
+            // Cộng thêm giá của các topping mặc định
             foreach (var topping in DefaultToppings)
             {
                 price += topping.Price;
@@ -70,7 +79,7 @@ namespace TrungminPizzeria
         {
             string toppingsString = DefaultToppings.Count > 0
                 ? string.Join(", ", DefaultToppings.Select(t => t.Name))
-                : "no toppings";
+                : "no extra toppings";
             return $"{Size} {Pizza.Type} Pizza with {toppingsString} - ${GetPrice():F2}";
         }
     }

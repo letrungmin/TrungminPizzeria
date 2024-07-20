@@ -6,9 +6,9 @@ namespace TrungminPizzeria
 {
     public class ConsoleUI
     {
-        private readonly Menu menu;
-        private readonly PizzaRepository repository;
-        private readonly List<Order> orders = new List<Order>();
+        public readonly Menu menu;
+        public readonly PizzaRepository repository;
+        public readonly List<Order> orders = new List<Order>();
 
         public ConsoleUI(Menu menu, PizzaRepository repository)
         {
@@ -44,7 +44,7 @@ namespace TrungminPizzeria
                 }
             }
         }
-        private void DisplayMainMenu()
+        public void DisplayMainMenu()
         {
             Console.WriteLine("\nWelcome to Trungmin's Pizzeria!");
             Console.WriteLine("----------------------------");
@@ -129,9 +129,6 @@ namespace TrungminPizzeria
             // In thông báo nếu không có pizza nào khớp với tiêu chí lọc
             // Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
         }
-
-
-
 
 
         public Customer TakeCustomerDetails()
@@ -267,13 +264,6 @@ namespace TrungminPizzeria
         }
 
 
-
-
-
-
-
-
-
         public void ManageOrders()
         {
             while (true)
@@ -384,7 +374,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void AddPizzaToExistingOrder(Order order)
+        public void AddPizzaToExistingOrder(Order order)
         {
             DisplayMenu();
 
@@ -409,7 +399,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void RemovePizzaFromOrder(Order order)
+        public void RemovePizzaFromOrder(Order order)
         {
             Console.WriteLine("\nPizzas in the order:");
             for (int i = 0; i < order.Pizzas.Count; i++)
@@ -435,7 +425,7 @@ namespace TrungminPizzeria
             }
         }
 
-        private void UpdateCustomerDetails(Order order)
+        public void UpdateCustomerDetails(Order order)
         {
             Console.WriteLine("\nEnter new customer details:");
             Console.Write("Name: ");
@@ -449,7 +439,7 @@ namespace TrungminPizzeria
             Console.WriteLine("Customer details updated!");
         }
 
-        private void UpdateOrderStatus(Order order)
+        public void UpdateOrderStatus(Order order)
         {
             Console.WriteLine("\nCurrent order status: " + order.Status);
             Console.WriteLine("Enter new status (Placed, Preparing, Baking, Out for Delivery, Delivered, Cancelled):");
@@ -492,39 +482,6 @@ namespace TrungminPizzeria
             }
         }
 
-        public void SearchPizzas()
-        {
-            while (true)
-            {
-                Console.Clear();
-                Console.WriteLine("\nSearch Pizzas:");
-                Console.WriteLine("----------------");
-                Console.WriteLine("1. Search by Type");
-                Console.WriteLine("2. Search by Size");
-                Console.WriteLine("3. Search by Toppings");
-                Console.WriteLine("0. Back to Main Menu");
-                Console.Write("Enter your choice: ");
-
-                string searchChoice = Console.ReadLine();
-                switch (searchChoice)
-                {
-                    case "1":
-                        SearchPizzasByType();
-                        break;
-                    case "2":
-                        SearchPizzasBySize();
-                        break;
-                    case "3":
-                        SearchPizzasByToppings();
-                        break;
-                    case "0":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid choice.");
-                        break;
-                }
-            }
-        }
 
         private void SearchPizzasByType()
         {

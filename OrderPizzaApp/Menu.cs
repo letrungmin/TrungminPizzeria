@@ -5,8 +5,8 @@ using TrungminPizzeria;
 
 public class Menu
 {
-    private readonly List<MenuItem> menuItems = new List<MenuItem>();
-    private readonly PizzaRepository pizzaRepository;
+    public readonly List<MenuItem> menuItems = new List<MenuItem>();
+    public readonly PizzaRepository pizzaRepository;
 
     public Menu(PizzaRepository pizzaRepository)
     {
@@ -14,7 +14,7 @@ public class Menu
         GenerateMenuItems();
     }
 
-    private void GenerateMenuItems()
+    public void GenerateMenuItems()
     {
         var pizzas = pizzaRepository.GetAllPizzas();
         var toppings = pizzaRepository.GetAllToppings();

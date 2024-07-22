@@ -58,11 +58,11 @@ namespace TrungminPizzeria
         public void DisplayMenu()
         {
             List<MenuItem> menuItemsToDisplay = menu.GetAllMenuItems();
-            List<MenuItem> filteredMenuItems = menuItemsToDisplay.ToList(); // Tạo một bản sao để lưu kết quả lọc
+            List<MenuItem> filteredMenuItems = menuItemsToDisplay.ToList(); // Tạo bản sao để lưu kết quả lọc
 
             while (true)
             {
-                if (filteredMenuItems.Count == 0) // Kiểm tra danh sách đã lọc
+                if (filteredMenuItems.Count == 0)
                 {
                     Console.WriteLine("\nNo pizzas match your criteria.");
                     Console.WriteLine("Press any key to clear filters and return to the menu...");
@@ -74,14 +74,15 @@ namespace TrungminPizzeria
                 Console.Clear();
                 Console.WriteLine("\n*** MENU ***");
 
-                var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown"); // Group by trên filteredMenuItems
+                int itemNumber = 1; // Biến đếm số thứ tự của menuItem
+                var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown");
                 foreach (var category in menuItemsByCategory)
                 {
-                    Console.WriteLine($"\n{category.Key}:");
-                    int itemNumber = 1;
+                    Console.WriteLine($"\n{category.Key}:"); // Hiển thị tên loại pizza
+
                     foreach (var menuItem in category)
                     {
-                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}");
+                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Hiển thị mô tả menuItem
                         itemNumber++;
                     }
                 }
@@ -101,17 +102,17 @@ namespace TrungminPizzeria
                     case "1":
                         Console.Write("Enter pizza type: ");
                         string type = Console.ReadLine();
-                        filteredMenuItems = filteredMenuItems.Where(mi => mi.Pizza.Type.Equals(type, StringComparison.OrdinalIgnoreCase)).ToList(); // Lọc trên filteredMenuItems
+                        filteredMenuItems = menu.GetMenuItemsByType(type);
                         break;
                     case "2":
                         Console.Write("Enter pizza size (Small, Medium, Large): ");
                         string size = Console.ReadLine();
-                        filteredMenuItems = filteredMenuItems.Where(mi => mi.Size.Equals(size, StringComparison.OrdinalIgnoreCase)).ToList(); // Lọc trên filteredMenuItems
+                        filteredMenuItems = menu.GetMenuItemsBySize(size);
                         break;
                     case "3":
                         Console.Write("Enter toppings (comma-separated): ");
                         string toppingsCriteria = Console.ReadLine();
-                        filteredMenuItems = filteredMenuItems.Where(mi => menu.SearchByToppings(toppingsCriteria).Contains(mi)).ToList(); // Lọc trên filteredMenuItems
+                        filteredMenuItems = menu.SearchByToppings(toppingsCriteria);
                         break;
                     case "4":
                         filteredMenuItems = menu.GetAllMenuItems().ToList(); // Reset filters
@@ -126,9 +127,9 @@ namespace TrungminPizzeria
                 menuItemsToDisplay = filteredMenuItems; // Cập nhật danh sách hiển thị
             }
 
-            // In thông báo nếu không có pizza nào khớp với tiêu chí lọc
-            // Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
+            Console.WriteLine("\nNo pizzas match your criteria or the menu is empty.");
         }
+
 
 
         public Customer TakeCustomerDetails()

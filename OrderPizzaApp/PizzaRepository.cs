@@ -8,22 +8,38 @@ namespace TrungminPizzeria
 {
     public class PizzaRepository
     {
-        public List<Pizza> _pizzas = new List<Pizza>();
-        public List<Topping> _toppings = new List<Topping>();
         public const string PIZZA_FILE = "pizzas.json";
         public const string TOPPINGS_FILE = "toppings.json";
         public static readonly object _fileLock = new object();
-
-
+        public List<Pizza> _pizzas = new List<Pizza>();
+        public List<Topping> _toppings = new List<Topping>();
         public PizzaRepository()
         {
             LoadData();
         }
 
-        public void LoadData()
+        // Trong PizzaRepository.cs
+        public List<Pizza> CreateDefaultPizzas()
         {
-            LoadPizzasFromFile(PIZZA_FILE); // Load pizzas from file
-            LoadToppingsFromFile(TOPPINGS_FILE);
+            var toppings = GetAllToppings();
+            return new List<Pizza>()
+    {
+        new Pizza(new MenuItem(new Pizza("Margherita", "Small"), "Small")),
+        new Pizza(new MenuItem(new Pizza("Pepperoni", "Medium"), "Medium")),
+        new Pizza(new MenuItem(new Pizza("Veggie", "Large"), "Large")),
+        new Pizza(new MenuItem(new Pizza("Hawaiian", "Large"), "Large")),
+    };
+        }
+
+        public List<Topping> CreateDefaultToppings()
+        {
+            return new List<Topping>
+        {
+            new Topping("Extra Cheese", 1.00m),
+            new Topping("Pepperoni", 1.50m),
+            new Topping("Onion", 0.50m)
+            // ... add other default topping instances
+        };
         }
 
         public List<Pizza> GetAllPizzas() => _pizzas;
@@ -35,6 +51,11 @@ namespace TrungminPizzeria
             return _pizzas.FirstOrDefault(p => p.Type.Equals(type, StringComparison.OrdinalIgnoreCase) && p.Size.Equals(size, StringComparison.OrdinalIgnoreCase));
         }
 
+        public void LoadData()
+        {
+            LoadPizzasFromFile(PIZZA_FILE); // Load pizzas from file
+            LoadToppingsFromFile(TOPPINGS_FILE);
+        }
         public void LoadPizzasFromFile(string filePath)
         {
             lock (_fileLock)
@@ -60,21 +81,6 @@ namespace TrungminPizzeria
                 }
             }
         }
-
-        // Trong PizzaRepository.cs
-        public List<Pizza> CreateDefaultPizzas()
-        {
-            var toppings = GetAllToppings();
-            return new List<Pizza>()
-    {
-        new Pizza(new MenuItem(new Pizza("Margherita", "Small"), "Small")),
-        new Pizza(new MenuItem(new Pizza("Pepperoni", "Medium"), "Medium")),
-        new Pizza(new MenuItem(new Pizza("Veggie", "Large"), "Large")),
-        new Pizza(new MenuItem(new Pizza("Hawaiian", "Large"), "Large")),
-    };
-        }
-
-
         public void LoadToppingsFromFile(string filePath)
         {
             lock (_fileLock)
@@ -100,17 +106,8 @@ namespace TrungminPizzeria
                 }
             }
         }
-
-        public List<Topping> CreateDefaultToppings()
-        {
-            return new List<Topping>
-        {
-            new Topping("Extra Cheese", 1.00m),
-            new Topping("Pepperoni", 1.50m),
-            new Topping("Onion", 0.50m)
-            // ... add other default topping instances
-        };
-        }
     }
+
+
 }
 

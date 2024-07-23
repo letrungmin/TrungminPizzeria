@@ -19,6 +19,7 @@ public class Menu
         var pizzas = pizzaRepository.GetAllPizzas();
         var toppings = pizzaRepository.GetAllToppings();
 
+
         foreach (var pizza in pizzas)
         {
             foreach (var size in new[] { "Small", "Medium", "Large" })
@@ -28,6 +29,7 @@ public class Menu
                 menuItems.Add(menuItem);
             }
         }
+
     }
 
     // Added an indexer to get a MenuItem by index

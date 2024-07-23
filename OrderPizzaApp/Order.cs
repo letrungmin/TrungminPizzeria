@@ -43,7 +43,8 @@ namespace TrungminPizzeria
         {
             var details = new StringBuilder();
             details.AppendLine($"Order ID: {OrderId}");
-            details.AppendLine($"Customer: {Customer.Name} ({Customer.PhoneNumber})");
+            details.AppendLine($"Customer Name: {Customer.Name} ");
+            details.AppendLine($"Phone Number: {Customer.PhoneNumber}");
             details.AppendLine($"Address: {Address}");
             details.AppendLine($"Order Time: {OrderTime}");
             details.AppendLine($"Status: {Status}");
@@ -74,6 +75,7 @@ namespace TrungminPizzeria
             UpdateStatus(OrderStatus.CANCELLED);
         }
     }
-
-
 }
+
+
+

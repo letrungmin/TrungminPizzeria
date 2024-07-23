@@ -55,8 +55,6 @@ namespace TrungminPizzeria
             Console.WriteLine("----------------------------");
         }
 
-
-
         public void DisplayMenu()
         {
             List<MenuItem> menuItemsToDisplay = menu.GetAllMenuItems();
@@ -150,8 +148,6 @@ namespace TrungminPizzeria
                 }
             }
         }
-
-
 
         public void PlaceOrderMenu()
         {
@@ -296,15 +292,10 @@ namespace TrungminPizzeria
             }
         }
 
-        // Phương thức kiểm tra thông tin khách hàng (bạn cần tự triển khai)
         private bool IsValidCustomer(Customer customer)
         {
-            // Thêm logic kiểm tra ở đây, ví dụ: kiểm tra số điện thoại có hợp lệ không
-            // return true nếu hợp lệ, false nếu không hợp lệ
-            return true; // Ví dụ: luôn trả về true (bỏ qua kiểm tra)
+            return true;
         }
-
-
 
         public void ManageOrders()
         {
@@ -355,21 +346,39 @@ namespace TrungminPizzeria
                 Console.WriteLine($"{i + 1}. Order ID: {orders[i].OrderId}, Status: {orders[i].Status}");
             }
 
-            Console.Write("Enter order number to view details (0 to go back): ");
-            int orderId;
-            if (!int.TryParse(Console.ReadLine(), out orderId) || !orders.Any(o => o.OrderId == orderId))
+            while (true)
             {
-                Console.WriteLine("Order not found.");
-                return;
-            }
-            
-            else if (orderId != 0)
-            {
-                Console.WriteLine("Invalid order number.");
+                Console.Write("Enter order ID to view details (0 to go back): ");
+                string input = Console.ReadLine();
+
+                if (input == "0")
+                {
+                    return; // Quay lại menu quản lý đơn hàng nếu người dùng nhập 0
+                }
+
+                if (int.TryParse(input, out int orderId))
+                {
+                    // Tìm kiếm đơn hàng theo orderId
+                    Order orderToDisplay = orders.FirstOrDefault(o => o.OrderId == orderId);
+
+                    if (orderToDisplay != null)
+                    {
+                        Console.WriteLine(orderToDisplay.GetOrderDetails());
+                        Console.WriteLine("\nPress any key to continue...");
+                        Console.ReadKey();
+                        break; // Thoát khỏi vòng lặp sau khi hiển thị chi tiết
+                    }
+                    else
+                    {
+                        Console.WriteLine("Order not found.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid order ID. Please enter a number.");
+                }
             }
         }
-
-
 
         public void UpdateOrder()
         {
@@ -528,46 +537,6 @@ namespace TrungminPizzeria
             }
         }
 
-
-        private void SearchPizzasByType()
-        {
-            Console.Write("Enter pizza type: ");
-            string type = Console.ReadLine();
-            List<MenuItem> filteredItems = menu.GetMenuItemsByType(type);
-            DisplayMenuItems(filteredItems, "Pizzas matching type:");
-        }
-
-        private void SearchPizzasBySize()
-        {
-            Console.Write("Enter pizza size (Small, Medium, Large): ");
-            string size = Console.ReadLine();
-            List<MenuItem> filteredItems = menu.GetMenuItemsBySize(size);
-            DisplayMenuItems(filteredItems, "Pizzas matching size:");
-        }
-
-        private void SearchPizzasByToppings()
-        {
-            Console.Write("Enter toppings (comma-separated): ");
-            string toppingsCriteria = Console.ReadLine();
-            List<MenuItem> filteredItems = menu.SearchByToppings(toppingsCriteria);
-            DisplayMenuItems(filteredItems, "Pizzas matching toppings:");
-        }
-
-        private void DisplayMenuItems(List<MenuItem> items, string heading)
-        {
-            if (items.Count == 0)
-            {
-                Console.WriteLine("\nNo pizzas found matching your criteria.");
-            }
-            else
-            {
-                Console.WriteLine($"\n{heading}");
-                for (int i = 0; i < items.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}. {items[i].GetDescription()}");
-                }
-            }
-        }
 
     }
 }

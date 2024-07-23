@@ -6,13 +6,11 @@ using Newtonsoft.Json;
 
 public class Pizza
 {
-
     public string Type { get; }
     public string Size { get; }
     public List<Topping> Toppings { get; } = new List<Topping>();
     public decimal Price { get; private set; }
 
-    // Nested dictionary for base prices (unchanged)
     public static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
     {
         { "margherita", new Dictionary<string, decimal> { { "small", 8.00m }, { "medium", 10.00m }, { "large", 12.00m } } },
@@ -21,7 +19,6 @@ public class Pizza
         { "hawaiian", new Dictionary<string, decimal> { { "small", 10.50m }, { "medium", 13.00m }, { "large", 15.50m } } }
     };
 
-    // Constructors
     [JsonConstructor]
     public Pizza(string type, string size)
     {
@@ -37,15 +34,11 @@ public class Pizza
 
         CalculatePrice();
     }
-
-    
-    public Pizza(Pizza pizza) : this(pizza.Type, pizza.Size)  // Use 'this' to call the main constructor
+    public Pizza(Pizza pizza) : this(pizza.Type, pizza.Size)
     {
-        Toppings = new List<Topping>(pizza.Toppings); // Deep copy the toppings list
+        Toppings = new List<Topping>(pizza.Toppings);
         CalculatePrice();
     }
-
-    [JsonConstructor]
     public Pizza(MenuItem menuItem) : this(menuItem.Pizza) // Use 'this' to call the copy constructor
     {
         foreach (var topping in menuItem.DefaultToppings)
@@ -77,7 +70,6 @@ public class Pizza
         Price = basePrices[Type][Size]; // Get base price
         Price += Toppings.Sum(t => t.Price); // Add topping prices
     }
-
     public string GetOrderDetails()
     {
         string toppingsString = Toppings.Count > 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using OrderPizzaApp;
 
 namespace TrungminPizzeria
 {
@@ -19,15 +20,15 @@ namespace TrungminPizzeria
         }
 
         // Trong PizzaRepository.cs
-        public List<Pizza> CreateDefaultPizzas()
+        private List<Pizza> CreateDefaultPizzas()
         {
-            var toppings = GetAllToppings();
+            var factory = new ConcretePizzaFactory();
             return new List<Pizza>()
     {
-        new Pizza(new MenuItem(new Pizza("Margherita", "Small"), "Small")),
-        new Pizza(new MenuItem(new Pizza("Pepperoni", "Medium"), "Medium")),
-        new Pizza(new MenuItem(new Pizza("Veggie", "Large"), "Large")),
-        new Pizza(new MenuItem(new Pizza("Hawaiian", "Large"), "Large")),
+        factory.CreatePizza("Margherita"),
+        factory.CreatePizza("Pepperoni"),
+        factory.CreatePizza("Veggie"),
+        factory.CreatePizza("Hawaiian")
     };
         }
 

@@ -46,14 +46,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleUI.cs" />
+    <Compile Include="ConcretePizzaFactory.cs" />
+    <Compile Include="UI.cs" />
     <Compile Include="Customer.cs" />
-    <Compile Include="Menu.cs" />
-    <Compile Include="MenuItem.cs" />
-    <Compile Include="Order.cs" />
-    <Compile Include="OrderStatus.cs" />
+    <Compile Include="PizzaFactory.cs" />
+    <Compile Include="PizzaType\HawaiianPizza.cs" />
+    <Compile Include="PizzaType\MargheritaPizza.cs" />
+    <Compile Include="Menu\Menu.cs" />
+    <Compile Include="Menu\MenuItem.cs" />
+    <Compile Include="Order\Order.cs" />
+    <Compile Include="Order\OrderStatus.cs" />
+    <Compile Include="PizzaType\PepperoniPizza.cs" />
     <Compile Include="Pizza.cs" />
     <Compile Include="PizzaRepository.cs" />
+    <Compile Include="PizzaType\VeggiePizza.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Topping.cs" />

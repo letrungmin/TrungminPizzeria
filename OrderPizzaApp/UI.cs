@@ -1,16 +1,17 @@
-﻿using System;
+﻿using OrderPizzaApp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace TrungminPizzeria
 {
-    public class ConsoleUI
+    public class UI
     {
         public readonly Menu menu;
         public readonly PizzaRepository repository;
         public readonly List<Order> orders = new List<Order>();
 
-        public ConsoleUI(Menu menu, PizzaRepository repository)
+        public UI(Menu menu, PizzaRepository repository)
         {
             this.menu = menu;
             this.repository = repository;
@@ -156,15 +157,16 @@ namespace TrungminPizzeria
 
             Console.WriteLine("\n*** MENU ***");
 
+            //int itemNumber = 1; // Biến đếm số thứ tự của menuItem
+                                // Hiển thị menu items with categories
+            var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown");
             int itemNumber = 1; // Biến đếm số thứ tự của menuItem
-            var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown"); // Group by trên filteredMenuItems
             foreach (var category in menuItemsByCategory)
             {
                 Console.WriteLine($"\n{category.Key}:"); // Hiển thị tên loại pizza
-
                 foreach (var menuItem in category)
                 {
-                    Console.WriteLine($"{itemNumber}. {menuItem.Pizza.Type} - {menuItem.GetDescription()}"); // Hiển thị loại pizza và mô tả menuItem
+                    Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Hiển thị mô tả menuItem
                     itemNumber++;
                 }
             }
@@ -218,18 +220,10 @@ namespace TrungminPizzeria
 
         public void PlaceOrder()
         {
-            // Lấy thông tin khách hàng
             Customer customer = TakeCustomerDetails();
-
-            // Xác thực thông tin khách hàng (ví dụ: kiểm tra số điện thoại)
-            if (!IsValidCustomer(customer))
-            {
-                Console.WriteLine("Invalid customer information. Please try again.");
-                return; // Quay lại menu chính nếu thông tin không hợp lệ
-            }
-
             Console.Write("Enter delivery address: ");
             string address = Console.ReadLine();
+            PizzaFactory pizzaFactory = new ConcretePizzaFactory();
 
             Order order = new Order(customer, address);
 
@@ -242,7 +236,7 @@ namespace TrungminPizzeria
 
                 if (pizzaChoiceStr == "0")
                 {
-                    break; // Thoát vòng lặp nếu người dùng nhập 0
+                    break; // Exit pizza selection loop
                 }
 
                 // Kiểm tra xem lựa chọn có phải là số hợp lệ không
@@ -255,8 +249,26 @@ namespace TrungminPizzeria
                 // Lấy MenuItem dựa trên lựa chọn của người dùng
                 MenuItem selectedMenuItem = menu.GetMenuItem(pizzaIndex);
 
+                //// Hiển thị các size pizza có sẵn và yêu cầu người dùng chọn
+                //Console.WriteLine($"\nYou selected a {selectedMenuItem.Pizza.Type} pizza. Choose a size:");
+                //var sizes = new[] { "Small", "Medium", "Large" };
+                //for (int i = 0; i < sizes.Length; i++)
+                //{
+                //    Console.WriteLine($"{i + 1}. {sizes[i]}");
+                //}
+
+                //// Lấy lựa chọn kích thước từ người dùng
+                //int sizeChoice;
+                //if (!int.TryParse(Console.ReadLine(), out sizeChoice) || sizeChoice < 1 || sizeChoice > sizes.Length)
+                //{
+                //    Console.WriteLine("Invalid size choice.");
+                //    continue;
+                //}
+
+                //string selectedSize = sizes[sizeChoice - 1];
+
                 // Tạo một Pizza mới dựa trên MenuItem đã chọn
-                Pizza pizza = new Pizza(selectedMenuItem);
+                Pizza pizza = pizzaFactory.CreatePizza(selectedMenuItem.Pizza.Type); // Sử dụng factory để tạo pizza
 
                 // Cho phép tùy chỉnh topping
                 pizza = TakePizzaCustomization(pizza);
@@ -265,6 +277,9 @@ namespace TrungminPizzeria
                 order.AddPizza(pizza);
                 Console.WriteLine($"{pizza.GetOrderDetails()} added to your order.");
             }
+
+            // ... (phần còn lại của phương thức PlaceOrder)
+            // ... (previous code for taking customer details and adding pizzas to order)
 
             // Kiểm tra xem đơn hàng có trống không
             if (order.Pizzas.Count == 0)
@@ -290,7 +305,9 @@ namespace TrungminPizzeria
                     Console.WriteLine("Order cancelled.");
                 }
             }
+
         }
+
 
         private bool IsValidCustomer(Customer customer)
         {
@@ -429,21 +446,25 @@ namespace TrungminPizzeria
             }
         }
 
-        public void AddPizzaToExistingOrder(Order order)
+        
+
+        private void AddPizzaToExistingOrder(Order order)
         {
-            DisplayMenu();
+            PlaceOrderMenu();
+            PizzaFactory pizzaFactory = new ConcretePizzaFactory();
 
             Console.Write("\nEnter the number of the pizza you want to add (0 to cancel): ");
             string pizzaChoice = Console.ReadLine();
 
             if (pizzaChoice == "0")
-                return; // Exit if the user cancels
+                return;
 
             int pizzaNumber;
             if (int.TryParse(pizzaChoice, out pizzaNumber) && pizzaNumber >= 1 && pizzaNumber <= menu.GetAllMenuItems().Count)
             {
                 MenuItem selectedMenuItem = menu.GetMenuItem(pizzaNumber);
-                Pizza pizza = new Pizza(selectedMenuItem);
+   
+                Pizza pizza = pizzaFactory.CreatePizza(selectedMenuItem.Pizza.Type);
                 pizza = TakePizzaCustomization(pizza);
                 order.AddPizza(pizza);
                 Console.WriteLine($"{pizza.GetOrderDetails()} added to the order.");
@@ -453,6 +474,7 @@ namespace TrungminPizzeria
                 Console.WriteLine("Invalid pizza number.");
             }
         }
+
 
         public void RemovePizzaFromOrder(Order order)
         {

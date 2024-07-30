@@ -9,7 +9,7 @@ namespace TrungminPizzeria
         static Task Main(string[] args)
         {
             PizzaRepository repository = new PizzaRepository();
-            ConsoleUI ui = new ConsoleUI(new Menu(repository), repository);
+            UI ui = new UI(new Menu(repository), repository);
             ui.Start();
             return Task.CompletedTask;
         }

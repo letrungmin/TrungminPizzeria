@@ -4,12 +4,12 @@ using TrungminPizzeria;
 using System.Linq;
 using Newtonsoft.Json;
 
-public class Pizza
+public abstract class Pizza
 {
-    public string Type { get; }
-    public string Size { get; }
-    public List<Topping> Toppings { get; } = new List<Topping>();
-    public decimal Price { get; private set; }
+    public string Type { get; set; }
+    public string Size { get; set; }
+    public List<Topping> Toppings { get; set; } = new List<Topping>();
+    public decimal Price { get; set; }
 
     public static readonly Dictionary<string, Dictionary<string, decimal>> basePrices = new Dictionary<string, Dictionary<string, decimal>>
     {
@@ -59,7 +59,7 @@ public class Pizza
         CalculatePrice();
     }
 
-    private void CalculatePrice()
+    public virtual void CalculatePrice()
     {
         // Ensure the pizza type and size are valid before accessing base prices
         if (!basePrices.ContainsKey(Type) || !basePrices[Type].ContainsKey(Size))

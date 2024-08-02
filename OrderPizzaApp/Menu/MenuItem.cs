@@ -63,10 +63,10 @@ namespace TrungminPizzeria
 
         public decimal GetPrice()
         {
-            // Lấy giá cơ bản từ lớp Pizza dựa trên loại và kích thước
+            // Get base price from Pizza class based on type and size
             decimal price = Pizza.basePrices[Pizza.Type.ToLower()][Size.ToLower()];
 
-            // Cộng thêm giá của các topping mặc định
+            // Add the price of the default toppings
             foreach (var topping in DefaultToppings)
             {
                 price += topping.Price;

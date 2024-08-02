@@ -12,22 +12,9 @@ namespace OrderPizzaApp.PizzaType
 
         public override void CalculatePrice()
         {
-            // Logic tính giá cho Margherita
-            Price = basePrices[Type][Size]; // Giá cơ bản
-            Price += Toppings.Sum(t => t.Price); // Cộng thêm giá topping
+            Price = basePrices[Type][Size]; 
+            Price += Toppings.Sum(t => t.Price); 
         }
     }
-
-
-    //public class PepperoniPizza : Pizza
-    //{
-    //    public PepperoniPizza(string size) : base("Pepperoni", size) { }
-    //    public override void CalculatePrice()
-    //    {
-    //        // Logic tính giá cho Pepperoni
-    //        base.CalculatePrice(); // Gọi phương thức CalculatePrice từ lớp cha
-    //        Price += 1.50m; // Cộng thêm giá topping Pepperoni vào giá cơ bản của pizza
-    //    }
-    //}
 
 }

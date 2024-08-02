@@ -19,7 +19,7 @@ namespace TrungminPizzeria
             LoadData();
         }
 
-        // Trong PizzaRepository.cs
+        
         private List<Pizza> CreateDefaultPizzas()
         {
             var factory = new ConcretePizzaFactory();
@@ -39,7 +39,7 @@ namespace TrungminPizzeria
             new Topping("Extra Cheese", 1.00m),
             new Topping("Pepperoni", 1.50m),
             new Topping("Onion", 0.50m)
-            // ... add other default topping instances
+            
         };
         }
 
@@ -96,7 +96,6 @@ namespace TrungminPizzeria
                     catch (JsonException ex)
                     {
                         Console.WriteLine($"Error: Invalid JSON format in toppings file: {ex.Message}");
-                        // Handle the error (e.g., create default toppings)
                         _toppings = CreateDefaultToppings();
                     }
                 }

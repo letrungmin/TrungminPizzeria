@@ -12,9 +12,9 @@ namespace OrderPizzaApp.PizzaType
 
             public override void CalculatePrice()
             {
-                // Logic tính giá cho Margherita
-                Price = basePrices[Type][Size]; // Giá cơ bản
-                Price += Toppings.Sum(t => t.Price); // Cộng thêm giá topping
+                // Price logic for Pizza Type
+                Price = basePrices[Type][Size]; // base price
+                Price += Toppings.Sum(t => t.Price); // Add ons toppings
             }
         }
 }

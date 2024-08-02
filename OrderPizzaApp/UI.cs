@@ -81,7 +81,7 @@ namespace TrungminPizzeria
                 Console.Clear();
                 Console.WriteLine("\n*** MENU ***");
 
-                // Hiển thị loại filter hiện tại
+                // Display currently filter type
                 if (!string.IsNullOrEmpty(currentTypeFilter))
                 {
                     Console.WriteLine($"Current type filter: {currentTypeFilter}");
@@ -95,15 +95,15 @@ namespace TrungminPizzeria
                     Console.WriteLine($"Current toppings filter: {currentToppingsFilter}");
                 }
 
-                // Hiển thị menu items with categories
+                // Display menu items with categories
                 var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown");
-                int itemNumber = 1; // Biến đếm số thứ tự của menuItem
+                int itemNumber = 1; 
                 foreach (var category in menuItemsByCategory)
                 {
-                    Console.WriteLine($"\n{category.Key}:"); // Hiển thị tên loại pizza
+                    Console.WriteLine($"\n{category.Key}:"); 
                     foreach (var menuItem in category)
                     {
-                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Hiển thị mô tả menuItem
+                        Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); 
                         itemNumber++;
                     }
                 }
@@ -153,20 +153,18 @@ namespace TrungminPizzeria
         public void PlaceOrderMenu()
         {
             List<MenuItem> menuItemsToDisplay = menu.GetAllMenuItems();
-            List<MenuItem> filteredMenuItems = menuItemsToDisplay.ToList(); // Tạo một bản sao để lưu kết quả lọc
+            List<MenuItem> filteredMenuItems = menuItemsToDisplay.ToList(); // Create a copy to save the filter results
 
             Console.WriteLine("\n*** MENU ***");
 
-            //int itemNumber = 1; // Biến đếm số thứ tự của menuItem
-                                // Hiển thị menu items with categories
             var menuItemsByCategory = filteredMenuItems.GroupBy(mi => mi.Pizza?.Type ?? "Unknown");
-            int itemNumber = 1; // Biến đếm số thứ tự của menuItem
+            int itemNumber = 1; // Variable to count the order number of the menuItem
             foreach (var category in menuItemsByCategory)
             {
-                Console.WriteLine($"\n{category.Key}:"); // Hiển thị tên loại pizza
+                Console.WriteLine($"\n{category.Key}:"); // Display the Pizza name
                 foreach (var menuItem in category)
                 {
-                    Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Hiển thị mô tả menuItem
+                    Console.WriteLine($"{itemNumber}. {menuItem?.GetDescription() ?? "Unavailable"}"); // Display menuItem description
                     itemNumber++;
                 }
             }
@@ -192,7 +190,7 @@ namespace TrungminPizzeria
             while (true)
             {
                 Console.WriteLine("\nAvailable toppings:");
-                for (int i = 0; i < availableToppings.Count; i++) // Đảm bảo duyệt qua tất cả các topping
+                for (int i = 0; i < availableToppings.Count; i++) // Make sure to iterate through all toppings
                 {
                     Console.WriteLine($"{i + 1}. {availableToppings[i].Name} (+${availableToppings[i].Price:F2})");
                 }
@@ -239,62 +237,42 @@ namespace TrungminPizzeria
                     break; // Exit pizza selection loop
                 }
 
-                // Kiểm tra xem lựa chọn có phải là số hợp lệ không
+                // Check if the choice is a valid number
                 if (!int.TryParse(pizzaChoiceStr, out int pizzaIndex) || pizzaIndex < 1 || pizzaIndex > menu.GetAllMenuItems().Count)
                 {
                     Console.WriteLine("Invalid pizza number. Please enter a valid number from the menu.");
                     continue;
                 }
 
-                // Lấy MenuItem dựa trên lựa chọn của người dùng
+                // Get MenuItem based on user selection
                 MenuItem selectedMenuItem = menu.GetMenuItem(pizzaIndex);
 
-                //// Hiển thị các size pizza có sẵn và yêu cầu người dùng chọn
-                //Console.WriteLine($"\nYou selected a {selectedMenuItem.Pizza.Type} pizza. Choose a size:");
-                //var sizes = new[] { "Small", "Medium", "Large" };
-                //for (int i = 0; i < sizes.Length; i++)
-                //{
-                //    Console.WriteLine($"{i + 1}. {sizes[i]}");
-                //}
 
-                //// Lấy lựa chọn kích thước từ người dùng
-                //int sizeChoice;
-                //if (!int.TryParse(Console.ReadLine(), out sizeChoice) || sizeChoice < 1 || sizeChoice > sizes.Length)
-                //{
-                //    Console.WriteLine("Invalid size choice.");
-                //    continue;
-                //}
-
-                //string selectedSize = sizes[sizeChoice - 1];
-
-                // Tạo một Pizza mới dựa trên MenuItem đã chọn
+                // Create a new Pizza based on the selected MenuItem
                 Pizza pizza = pizzaFactory.CreatePizza(selectedMenuItem.Pizza.Type); // Sử dụng factory để tạo pizza
 
-                // Cho phép tùy chỉnh topping
+                // Allow customize toppings
                 pizza = TakePizzaCustomization(pizza);
 
-                // Thêm pizza vào đơn hàng
+                // Add pizza to order
                 order.AddPizza(pizza);
                 Console.WriteLine($"{pizza.GetOrderDetails()} added to your order.");
             }
 
-            // ... (phần còn lại của phương thức PlaceOrder)
-            // ... (previous code for taking customer details and adding pizzas to order)
-
-            // Kiểm tra xem đơn hàng có trống không
+            // Check if order is empty
             if (order.Pizzas.Count == 0)
             {
                 Console.WriteLine("Your order is empty.");
             }
             else
             {
-                // Hiển thị tóm tắt đơn hàng và yêu cầu xác nhận
+                // Display order summary and request confirmation
                 Console.WriteLine("\nOrder Summary:");
                 Console.WriteLine(order.GetOrderDetails());
                 Console.Write("\nConfirm order? (yes/no): ");
                 string confirm = Console.ReadLine()?.ToLower();
 
-                // Kiểm tra xác nhận
+                // Check confirmation
                 if (confirm == "yes")
                 {
                     orders.Add(order);

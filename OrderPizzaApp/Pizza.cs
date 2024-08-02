@@ -39,7 +39,7 @@ public abstract class Pizza
         Toppings = new List<Topping>(pizza.Toppings);
         CalculatePrice();
     }
-    public Pizza(MenuItem menuItem) : this(menuItem.Pizza) // Use 'this' to call the copy constructor
+    public Pizza(MenuItem menuItem) : this(menuItem.Pizza) 
     {
         foreach (var topping in menuItem.DefaultToppings)
         {

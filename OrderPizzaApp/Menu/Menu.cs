@@ -81,7 +81,6 @@ public class Menu
         return menuItems; // Assuming you have a list called menuItems in your Menu class
     }
 
-    // In Menu.cs
     public MenuItem GetMenuItem(int itemNumber)
     {
         if (itemNumber >= 1 && itemNumber <= menuItems.Count)
